@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: boat-deal-radar
+    env: docker
+    plan: starter
+    autoDeploy: true
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: SEARCH_RADIUS_MILES
+        value: 100
+      - key: MAX_PRICE
+        value: 50000
+      - key: MIN_LENGTH
+        value: 20
+      - key: MIN_HP
+        value: 150
+      - key: MIN_SEATS
+        value: 6
+      - key: MIN_SCORE
+        value: 80
+      - key: SEARCH_CRON
+        value: "0 8,16 * * *"

@@ -1,0 +1,32 @@
+[
+  {
+    "source": "Sample",
+    "url": "https://example.com/boat1",
+    "title": "2015 Blue Wave 2200 PureBay",
+    "year": 2015,
+    "location": "Matagorda, TX",
+    "distance_miles": 95,
+    "asking_price": 40000,
+    "length_ft": 21.3,
+    "horsepower": 150,
+    "engine_hours": 200,
+    "seating": 8,
+    "has_ttop": 1,
+    "ttop_type": "Custom K-Top",
+    "has_trolling": 1,
+    "has_powerpole": 1,
+    "has_jackplate": 0,
+    "estimated_new_low": 52000,
+    "estimated_new_high": 58000,
+    "fair_value_low": 36000,
+    "fair_value_high": 41000,
+    "accessories_new_low": 10000,
+    "accessories_new_high": 14000,
+    "accessories_today_low": 5000,
+    "accessories_today_high": 7500,
+    "cost_to_complete": 1800,
+    "all_in": 41800,
+    "deal_score": 86,
+    "why": "Sample seed record. Replace by running a live search after deployment."
+  }
+]

@@ -1,0 +1,1 @@
+require('dotenv').config(); const {runSearch}=require('./search'); runSearch().then(x=>{console.log(JSON.stringify(x,null,2));process.exit(0)}).catch(e=>{console.error(e);process.exit(1)});

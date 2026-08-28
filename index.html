@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08111f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Boat Radar">
+<title>Boat Deal Radar</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icons/icon-180.png">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div><h1>Boat Deal Radar</h1><p>Houston-area verified boat leads</p></div>
+  <button id="refreshBtn">Refresh</button>
+</header>
+<main>
+<section class="hero">
+  <div><span>Qualified</span><strong id="leadCount">0</strong></div>
+  <div><span>Top score</span><strong id="topScore">0</strong></div>
+  <div><span>Max ask</span><strong>$50K</strong></div>
+</section>
+
+<section class="filters card">
+  <div class="grid">
+    <label>Min score<input id="minScore" type="number" value="80" min="0" max="100"></label>
+    <label>Status<select id="statusFilter"><option value="all">All</option><option value="new">New</option><option value="interested">Interested</option><option value="pass">Passed</option></select></label>
+    <label><input id="favoritesOnly" type="checkbox"> Favorites only</label>
+    <label><input id="showBelow80" type="checkbox"> Show below 80</label>
+  </div>
+</section>
+
+<section id="loading" class="empty">Loading leads…</section>
+<section id="leadList" class="lead-list"></section>
+<section id="empty" class="empty hidden">No qualifying active leads right now.</section>
+</main>
+
+<template id="leadTemplate">
+<article class="lead-card">
+  <div class="lead-head">
+    <div><div class="eyebrow"></div><h2 class="title"></h2><div class="location"></div></div>
+    <div class="scorebox"><span>Deal score</span><strong class="score"></strong></div>
+  </div>
+  <div class="value-grid">
+    <div><span>Ask</span><strong class="ask"></strong></div>
+    <div><span>Fair value</span><strong class="fair"></strong></div>
+    <div><span>New est.</span><strong class="new"></strong></div>
+    <div><span>Accessories today</span><strong class="acc"></strong></div>
+    <div><span>Cost to complete</span><strong class="complete"></strong></div>
+    <div><span>All-in</span><strong class="allin"></strong></div>
+  </div>
+  <div class="pills"></div>
+  <p class="why"></p>
+  <div class="actions">
+    <button class="fav">Favorite</button>
+    <button class="interest">Interested</button>
+    <button class="pass">Pass</button>
+    <a class="open" target="_blank" rel="noopener">Open listing</a>
+  </div>
+</article>
+</template>
+<script src="/app.js"></script>
+</body>
+</html>
