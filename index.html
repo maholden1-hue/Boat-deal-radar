@@ -15,7 +15,10 @@
 <body>
 <header class="topbar">
   <div><h1>Boat Deal Radar</h1><p>Houston-area verified boat leads</p></div>
-  <button id="refreshBtn">Refresh</button>
+  <div class="header-actions">
+    <button id="runSearchBtn">Run Search Now</button>
+    <button id="refreshBtn">Refresh</button>
+  </div>
 </header>
 <main>
 <section class="hero">
@@ -23,6 +26,8 @@
   <div><span>Top score</span><strong id="topScore">0</strong></div>
   <div><span>Max ask</span><strong>$50K</strong></div>
 </section>
+
+<section id="searchStatus" class="search-status hidden"></section>
 
 <section class="filters card">
   <div class="grid">

@@ -5,13 +5,45 @@ const pill=(text,cls='')=>`<span class="pill ${cls}">${text}</span>`;
 
 let leads=[];
 
+async function runSearchNow(){
+  const btn=document.getElementById('runSearchBtn');
+  const box=document.getElementById('searchStatus');
+  btn.disabled=true;
+  btn.textContent='Searching…';
+  box.classList.remove('hidden','error','success');
+  box.textContent='Searching live listings and verifying exact pages. This can take a minute or two.';
+  try{
+    const res=await fetch('/api/search/run',{method:'POST',headers:{'Content-Type':'application/json'}});
+    const data=await res.json();
+    if(!res.ok || !data.ok) throw new Error(data.error || `Search failed (${res.status})`);
+    box.classList.add('success');
+    box.textContent=`Search complete. ${data.count||0} qualifying lead${(data.count||0)===1?'':'s'} found.`;
+    await loadLeads();
+  }catch(e){
+    box.classList.add('error');
+    box.textContent=`Search error: ${e.message}`;
+  }finally{
+    btn.disabled=false;
+    btn.textContent='Run Search Now';
+  }
+}
+
 async function loadLeads(){
   document.getElementById('loading').classList.remove('hidden');
-  const min = document.getElementById('showBelow80').checked ? 0 : Number(document.getElementById('minScore').value||80);
-  const res = await fetch(`/api/leads?minScore=${min}`);
-  leads = await res.json();
-  document.getElementById('loading').classList.add('hidden');
-  render();
+  try{
+    const min = document.getElementById('showBelow80').checked ? 0 : Number(document.getElementById('minScore').value||80);
+    const res = await fetch(`/api/leads?minScore=${min}`);
+    if(!res.ok) throw new Error(`Could not load leads (${res.status})`);
+    leads = await res.json();
+    render();
+  }catch(e){
+    const box=document.getElementById('searchStatus');
+    box.classList.remove('hidden','success');
+    box.classList.add('error');
+    box.textContent=`Load error: ${e.message}`;
+  }finally{
+    document.getElementById('loading').classList.add('hidden');
+  }
 }
 
 function render(){
@@ -21,8 +53,8 @@ function render(){
   let rows=leads.filter(x=>x.deal_score>=minScore);
   if(status!=='all') rows=rows.filter(x=>(x.status||'new')===status);
   if(favOnly) rows=rows.filter(x=>x.favorite);
-
   rows.sort((a,b)=>b.deal_score-a.deal_score);
+
   document.getElementById('leadCount').textContent=rows.length;
   document.getElementById('topScore').textContent=rows.length?Math.max(...rows.map(x=>x.deal_score)):0;
   document.getElementById('empty').classList.toggle('hidden',rows.length>0);
@@ -42,8 +74,7 @@ function render(){
     node.querySelector('.allin').textContent=fmt(x.all_in);
     node.querySelector('.why').textContent=x.why||'';
 
-    const p=node.querySelector('.pills');
-    p.innerHTML=[
+    node.querySelector('.pills').innerHTML=[
       pill(`${x.seating||'?'} seats`,x.seating>=6?'good':'missing'),
       pill(x.has_ttop?(x.ttop_type||'T-top'):'No T-top',x.has_ttop?'good':'missing'),
       pill(x.has_trolling?'Trolling motor':'No trolling motor',x.has_trolling?'good':'missing'),
@@ -56,6 +87,7 @@ function render(){
     if(x.favorite){fav.classList.add('active');fav.textContent='Favorited'}
     if(x.status==='interested') interest.classList.add('active');
     if(x.status==='pass') pass.classList.add('active');
+
     fav.onclick=async()=>{await fetch(`/api/leads/${x.id}/favorite`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({favorite:!x.favorite})});x.favorite=!x.favorite;render()};
     interest.onclick=async()=>{const s=x.status==='interested'?'new':'interested';await fetch(`/api/leads/${x.id}/status`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:s})});x.status=s;render()};
     pass.onclick=async()=>{const s=x.status==='pass'?'new':'pass';await fetch(`/api/leads/${x.id}/status`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({status:s})});x.status=s;render()};
@@ -64,6 +96,7 @@ function render(){
   }
 }
 
+document.getElementById('runSearchBtn').onclick=runSearchNow;
 document.getElementById('refreshBtn').onclick=loadLeads;
 ['minScore','statusFilter','favoritesOnly','showBelow80'].forEach(id=>document.getElementById(id).addEventListener('input',()=>id==='minScore'?loadLeads():render()));
 if('serviceWorker'in navigator) window.addEventListener('load',()=>navigator.serviceWorker.register('/service-worker.js'));
