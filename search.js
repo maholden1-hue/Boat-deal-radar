@@ -256,6 +256,49 @@ function buildWhy(x){
 
 function saveListing(x){
   const now = new Date().toISOString();
+
+  // SQLite named parameters must exist on the bound object even when the
+  // value is unknown. Normalize every optional field up front.
+  x = {
+    source: '',
+    source_id: null,
+    url: '',
+    title: '',
+    year: null,
+    make: '',
+    model: '',
+    location: '',
+    latitude: null,
+    longitude: null,
+    distance_miles: null,
+    asking_price: null,
+    length_ft: null,
+    horsepower: null,
+    engine_make: '',
+    engine_hours: null,
+    seating: null,
+    has_ttop: 0,
+    ttop_type: '',
+    has_trolling: 0,
+    has_powerpole: 0,
+    has_jackplate: 0,
+    trailer: '',
+    estimated_new_low: null,
+    estimated_new_high: null,
+    fair_value_low: null,
+    fair_value_high: null,
+    accessories_new_low: null,
+    accessories_new_high: null,
+    accessories_today_low: null,
+    accessories_today_high: null,
+    cost_to_complete: 0,
+    all_in: null,
+    deal_score: 0,
+    why: '',
+    raw_excerpt: '',
+    ...x
+  };
+
   const existing = db.prepare('SELECT * FROM listings WHERE url=?').get(x.url);
   if (!existing) {
     const stmt = db.prepare(`
@@ -313,7 +356,24 @@ async function runSearch(){
   for (const q of queries) {
     try { urls.push(...await braveSearch(q)); } catch(e) { console.error(e.message); }
   }
-  urls = [...new Set(urls)].filter(u => /boattrader\.com\/boat\/|boats\.com\/|yachtworld\.com\/yacht\//i.test(u));
+  urls = [...new Set(urls)].filter(u => {
+    try {
+      const parsed = new URL(u);
+      const host = parsed.hostname.replace(/^www\./,'');
+      const path = parsed.pathname;
+      if (host.includes('boattrader.com')) return /^\/boat\/.+/i.test(path);
+      if (host.includes('yachtworld.com')) return /^\/yacht\/.+/i.test(path);
+      if (host.includes('boats.com')) {
+        // Exclude generic browse/search/category pages.
+        if (/\/boats-for-sale\/?$/i.test(path)) return false;
+        if (/\/boats-for-sale\//i.test(path) && !/\d{5,}/.test(path)) return false;
+        return /power-boats|boat|boats-for-sale/i.test(path) && /\d{5,}/.test(path);
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  });
 
   const found=[];
   for (const url of urls.slice(0,40)) {
