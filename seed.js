@@ -2,7 +2,7 @@
 require('dotenv').config();
 const db=require('./db');
 const fs=require('fs'), path=require('path');
-const rows=JSON.parse(fs.readFileSync(path.join(__dirname,'data','seed.json'),'utf8'));
+const rows=JSON.parse(fs.readFileSync(path.join(__dirname,'seed.json'),'utf8'));
 const now=new Date().toISOString();
 for(const x of rows){
   db.prepare(`INSERT OR IGNORE INTO listings

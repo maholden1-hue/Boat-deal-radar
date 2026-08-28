@@ -8,7 +8,7 @@ const { runSearch, verifyAndParse } = require('./search');
 
 const app = express();
 app.use(express.json({limit:'1mb'}));
-app.use(express.static(path.join(__dirname,'public')));
+app.use(express.static(__dirname));
 
 app.get('/api/health', (req,res)=>res.json({ok:true,time:new Date().toISOString()}));
 
@@ -60,7 +60,7 @@ app.post('/api/import-url', async (req,res)=>{
   }
 });
 
-app.get('*', (req,res)=>res.sendFile(path.join(__dirname,'public','index.html')));
+app.get('*', (req,res)=>res.sendFile(path.join(__dirname,'index.html')));
 
 const port = Number(process.env.PORT || 3000);
 app.listen(port, ()=>console.log(`Boat Deal Radar running on :${port}`));

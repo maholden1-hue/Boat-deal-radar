@@ -88,3 +88,7 @@ Current defaults:
 - Minimum practical seating: 6
 - Minimum score: 80
 - Preferences: T-top, trolling motor, Power-Pole/Talon, jack plate
+
+
+## iPhone/GitHub flat-upload build
+This package is intentionally flat: upload every file directly to the repository root. Do not create public/ or data/ folders.
